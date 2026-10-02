@@ -1,0 +1,28 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# --- Модели и бинарники движков -------------------------------------------------
+# В репозиторий не идут: ~13 ГБ. Качаются скриптами (npm run download:*),
+# см. README. Оба возможных места хранения исключены.
+resources/
+llama-mtmd/
+sd-vulkan/
+sd-bin/
+sd-vulkan-tmp.zip
+
+# --- Артефакты отладки и замеров ------------------------------------------------
+scripts/*.png
+scripts/*.jpg
+scripts/*.log
+_raw/
+
+# --- Черновики ------------------------------------------------------------------
+qwenlist.txt
+qwenwrapper.txt
+scripts/_fix_scripts.ps1

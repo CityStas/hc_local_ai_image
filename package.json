@@ -1,0 +1,122 @@
+{
+  "name": "nexus-offline-ai",
+  "private": true,
+  "version": "1.0.0",
+  "description": "HC AI — полностью офлайн ИИ-агент с встроенной локальной GGUF-моделью (Electron + node-llama-cpp)",
+  "type": "module",
+  "main": "main.cjs",
+  "scripts": {
+    "dev:web": "vite --port=3000 --host=0.0.0.0",
+    "dev": "vite --port=3000 --host=0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "vite build && electron .",
+    "electron:dev": "cross-env VITE_DEV_SERVER_URL=http://localhost:3000 electron .",
+    "dist:dir": "vite build && electron-builder --win dir",
+    "dist:exe": "vite build && electron-builder --win dir && node scripts/make-portable.cjs",
+    "dist:installer": "vite build && electron-builder --win nsis",
+    "dist": "vite build && electron-builder --win dir && node scripts/make-portable.cjs",
+    "lint": "tsc --noEmit",
+    "download:llm": "powershell -ExecutionPolicy Bypass -File scripts/download-llm.ps1",
+    "download:vlm-model": "powershell -ExecutionPolicy Bypass -File scripts/download-vlm-model.ps1",
+    "download:esrgan": "powershell -ExecutionPolicy Bypass -File scripts/download-esrgan.ps1",
+    "download:zimage": "powershell -ExecutionPolicy Bypass -File scripts/download-zimage.ps1",
+    "download:vulkan": "powershell -ExecutionPolicy Bypass -File scripts/download-sd-vulkan.ps1",
+    "download:vlm": "powershell -ExecutionPolicy Bypass -File scripts/download-vlm.ps1",
+    "download:moondream": "powershell -ExecutionPolicy Bypass -File scripts/download-moondream.ps1",
+    "download:all": "npm run download:llm && npm run download:vulkan && npm run download:zimage && npm run download:vlm && npm run download:vlm-model && npm run download:esrgan",
+    "test:zimage": "node scripts/test-zimage-load.cjs",
+    "bench:memory": "node scripts/bench-memory.cjs"
+  },
+  "dependencies": {
+    "node-llama-cpp": "^3.0.0",
+    "stable-diffusion-cpp-node-api": "^0.12.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.14",
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "cross-env": "^7.0.3",
+    "electron": "^30.0.0",
+    "electron-builder": "^25.1.8",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "tailwindcss": "^4.1.14",
+    "tsx": "^4.21.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.3"
+  },
+  "node-llama-cpp": {
+    "buildType": "prebuilt",
+    "gpu": "auto"
+  },
+  "build": {
+    "appId": "com.nexus.offline-ai",
+    "productName": "HC AI",
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/node-llama-cpp/**/*",
+      "node_modules/@node-llama-cpp/**/*",
+      "node_modules/stable-diffusion-cpp-node-api/**/*",
+      "node_modules/@stable-diffusion-cpp-node-api/**/*"
+    ],
+    "files": [
+      "dist/**/*",
+      "main.cjs",
+      "preload.cjs",
+      "sdEngine.cjs",
+      "vlmEngine.cjs",
+      "upscaleEngine.cjs",
+      "prefetch.cjs",
+      "scripts/prefetch-worker.cjs",
+      "node_modules/node-llama-cpp/**/*",
+      "node_modules/@node-llama-cpp/**/*",
+      "node_modules/stable-diffusion-cpp-node-api/**/*",
+      "node_modules/@stable-diffusion-cpp-node-api/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "node_modules/electron/dist/resources/qwen-3.5-0.8b",
+        "to": "qwen-3.5-0.8b",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "node_modules/electron/dist/resources/z-image-turbo",
+        "to": "z-image-turbo",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "node_modules/electron/dist/resources/MiniCPM-V-2_6-Q4_K_M",
+        "to": "MiniCPM-V-2_6-Q4_K_M",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "node_modules/electron/dist/resources/Real-ESRGAN-ncnn-vulkan",
+        "to": "Real-ESRGAN-ncnn-vulkan",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "llama-mtmd",
+        "to": "llama-mtmd",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "target": ["dir"]
+    },
+    "portable": {
+      "artifactName": "HC-AI-portable.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "HC-AI-setup.${ext}"
+    },
+    "electronLanguages": [
+      "ru",
+      "en-US"
+    ]
+  }
+}
